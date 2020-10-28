@@ -1,0 +1,97 @@
+# ESPECIFICACIÓN DE ARCHIVOS A IGNORAR
+# By : Oscar Giraldo
+# Github: gvoscar
+
+*.apk
+google-services.json
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# User
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/dictionaries
+
+# Sensitive or high-churn files:
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+
+
+# Gradle:
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# IntelliJ
+/out/
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+### Intellij+iml Patch ###
+*.iml
+modules.xml
+.idea/misc.xml
+*.ipr
+.cxx
+
+### Intellij+all Patch ###
+# Ignora toda la carpeta de ideas
+.idea/
+
+### Java ###
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Herramientas móviles para Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+
+# Evite ignorar el archivo jar de contenedor Maven (los archivos .jar generalmente se ignoran)
+!/.mvn/wrapper/maven-wrapper.jar
+
+src/androidTest
+src/test
+debug
