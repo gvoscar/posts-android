@@ -41,5 +41,11 @@
     <color name="grey_700">#616161</color>
     <color name="grey_800">#424242</color>
     <color name="grey_900">#212121</color>
+    <color name="colorBarRed">#961E28</color>
+    <color name="colorBarTeal">#004D40</color>
+    <color name="colorBarTealA700">#00BFA5</color>
+    <color name="color_gren_success">#25AE88</color>
+    <color name="color_yellow_warning">#EFCE4A</color>
+    <color name="amber_800">#ff8f00</color>
 
 </resources>

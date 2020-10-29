@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.gvoscar.apps.postsapp.MainActivity;
 import com.gvoscar.apps.postsapp.R;
 import com.gvoscar.apps.postsapp.features.loader.presenters.LoaderPresenter;
 import com.gvoscar.apps.postsapp.features.loader.presenters.LoaderPresenterImpl;
@@ -222,7 +223,7 @@ public class LoaderActivity extends AppCompatActivity implements LoaderView {
     @Override
     public void onAuthenticated() {
         Log.d(TAG, "Usuario autenticado");
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);

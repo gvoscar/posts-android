@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/containerLogin"
     tools:context=".features.login.ui.LoginActivity">
 
     <!-- [START] Layout #1 -->
@@ -72,7 +73,7 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/background_txt_white"
             android:focusable="true"
-            android:hint="Correo electronico"
+            android:hint="Usuario : gvoscar"
             android:inputType="textEmailAddress"
             android:paddingStart="16dp"
             android:paddingLeft="16dp"
@@ -99,7 +100,7 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/background_txt_white"
             android:focusable="true"
-            android:hint="Contraseña"
+            android:hint="Contraseña : 123456"
             android:inputType="textPassword"
             android:paddingStart="16dp"
             android:paddingLeft="16dp"
@@ -117,6 +118,7 @@
             android:enabled="true"
             android:selectAllOnFocus="true"
             android:text="Ingresar"
+            android:background="@color/colorPrimary"
             android:textColor="@color/app_color_withe_light"
             android:textColorHint="@color/grey_400" />
 
