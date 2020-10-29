@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @BindView(R.id.main_coordinator_layout)
     CoordinatorLayout mainCoordinatorLayout;
 
+    private PostsFragment postsFragment = new PostsFragment();
+    private FavoritePostsFragment favoritePostsFragment = new FavoritePostsFragment();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,10 +65,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_menu_posts) {
-            showFragment(new PostsFragment());
+            showFragment(postsFragment);
         }
         if (item.getItemId() == R.id.action_menu_favorites) {
-            showFragment(new FavoritePostsFragment());
+            showFragment(favoritePostsFragment);
         }
         if (item.getItemId() == R.id.action_menu_none) {
 
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @OnClick(R.id.bottomFloating)
     public void onClickBottomFloating() {
+        postsFragment.romoveAll();
         // startActivity(new Intent(this, VehicleActivity.class));
     }
 

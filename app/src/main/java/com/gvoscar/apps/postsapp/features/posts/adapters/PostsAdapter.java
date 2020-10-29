@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gvoscar.apps.postsapp.R;
@@ -66,6 +67,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public void add(int index, Post post) {
+        lista.add(index, post);
+        notifyDataSetChanged();
+    }
+
     public void add(Post post) {
         lista.add(post);
         notifyDataSetChanged();
@@ -76,9 +82,22 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public void remove(int pos) {
+        lista.remove(pos);
+        notifyDataSetChanged();
+    }
+
     public void clear() {
         lista.clear();
         notifyDataSetChanged();
+    }
+
+    public Post getPost(int position) {
+        return lista.get(position);
+    }
+
+    public int getLastItemPostId() {
+        return lista.lastIndexOf(lista.get(lista.size() - 1));
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

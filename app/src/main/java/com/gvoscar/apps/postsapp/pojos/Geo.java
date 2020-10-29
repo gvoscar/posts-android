@@ -1,6 +1,8 @@
 package com.gvoscar.apps.postsapp.pojos;
 
-public class Geo{
+import java.io.Serializable;
+
+public class Geo implements Serializable {
     private String lat;
     private String lng;
 

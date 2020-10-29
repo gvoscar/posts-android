@@ -1,6 +1,8 @@
 package com.gvoscar.apps.postsapp.pojos;
 
-public class Company {
+import java.io.Serializable;
+
+public class Company implements Serializable {
     private String name;
     private String catchPhrase;
     private String bs;

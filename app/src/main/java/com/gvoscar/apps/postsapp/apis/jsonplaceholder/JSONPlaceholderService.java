@@ -1,7 +1,12 @@
 package com.gvoscar.apps.postsapp.apis.jsonplaceholder;
 
-import android.database.Observable;
 
+
+import com.gvoscar.apps.postsapp.pojos.Post;
+
+import java.util.List;
+
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -9,12 +14,13 @@ import retrofit2.http.Path;
 public interface JSONPlaceholderService {
 
     @GET("posts")
-    Observable<Call<PostsResponse>> getPosts();
+    Observable<List<Post>> getPosts();
 
     @GET("posts")
-    Call<PostsResponse> posts();
+    Call<List<Post>> posts();
 
-    @GET("users/{userId}")
-    Call<PostsResponse> usersById(@Path("userId") String userId);
+//    @GET("users/{userId}")
+//    Call<UserResponse> usersById(@Path("userId") String userId);
 
 }
+ 

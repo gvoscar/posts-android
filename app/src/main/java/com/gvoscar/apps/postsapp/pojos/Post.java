@@ -1,10 +1,12 @@
 package com.gvoscar.apps.postsapp.pojos;
 
-public class Post {
-    private int userId;
-    private int id;
-    private String title;
-    private String body;
+import java.io.Serializable;
+
+public class Post implements Serializable {
+    public int userId;
+    public int id;
+    public String title;
+    public String body;
     private boolean favorite;
     private boolean readed;
 
