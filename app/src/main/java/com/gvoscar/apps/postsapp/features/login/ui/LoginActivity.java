@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
         mPresenter = new LoginPresenterImpl(this);
         mPresenter.onCreate();
+
     }
 
     @Override
