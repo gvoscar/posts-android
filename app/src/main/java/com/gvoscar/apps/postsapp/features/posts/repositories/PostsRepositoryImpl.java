@@ -7,8 +7,13 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.gvoscar.apps.postsapp.apis.jsonplaceholder.JSONPlaceholderClient;
 import com.gvoscar.apps.postsapp.apis.jsonplaceholder.JSONPlaceholderService;
 import com.gvoscar.apps.postsapp.database.Database;
@@ -18,6 +23,7 @@ import com.gvoscar.apps.postsapp.libs.base.eventbus.EventBus;
 import com.gvoscar.apps.postsapp.libs.base.eventbus.GreenRobotEventBus;
 import com.gvoscar.apps.postsapp.pojos.Post;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -35,6 +41,8 @@ public class PostsRepositoryImpl implements PostsRepository {
     private PostsResultReceiver mResultReceiver;
     private FragmentActivity mFragmentActivity;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+    private DatabaseReference reference;
+    private ValueEventListener listener;
 
 
     public PostsRepositoryImpl(FragmentActivity fragmentActivity, Context context) {
@@ -48,17 +56,85 @@ public class PostsRepositoryImpl implements PostsRepository {
     @Override
     public void getData() {
         Log.d(TAG, "getData()");
-        if (!mRequested) {
-            // Utilizar RXJava para consumir API.
-            // getDataWithRX();
 
-            // Utilizar Service para consumir API
-            getDataWithService();
+        DatabaseReference reference = mDatabase.getPostsReference();
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.hasChildren()) {
+                    if (!mRequested) {
+                        // Utilizar RXJava para consumir API.
+                        // getDataWithRX();
 
+                        // Utilizar Service para consumir API
+                        getDataWithService();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Ocurrio un error: " + error.getDetails(), error.toException());
+            }
+        });
+    }
+
+    @Override
+    public void subscribe() {
+        Log.d(TAG, "subscribe()");
+        reference = mDatabase.getPostsReference();
+        listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if (snapshot.exists()) {
+                    Log.d(TAG, "subscribe().   HAY POSTS");
+
+                    List<Post> posts = new ArrayList<>();
+
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        Post post = data.getValue(Post.class);
+                        posts.add(post);
+                    }
+
+                    postEvent(PostsEvent.DATA_LOADED, posts);
+                } else {
+                    Log.d(TAG, "subscribe().   NO HAY POSTS");
+                    postEvent(PostsEvent.NOT_FOUND, "No hay posts en la base de datos");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        reference.addValueEventListener(listener);
+    }
+
+    @Override
+    public void unsubscribe() {
+        Log.d(TAG, "unsubscribe()");
+        if (listener != null) {
+            reference.removeEventListener(listener);
+            listener = null;
         }
     }
 
-    private void getDataWithRX(){
+    @Override
+    public void removeAll() {
+        DatabaseReference reference = mDatabase.getPostsReference();
+        reference.removeValue();
+    }
+
+    @Override
+    public void removeById(String postId) {
+        DatabaseReference reference = mDatabase.getPostsReference();
+        reference.child(postId).removeValue();
+    }
+
+    private void getDataWithRX() {
         Log.d(TAG, "fetchDataRX()");
         JSONPlaceholderService service = new JSONPlaceholderClient().getJsonPlaceholderService();
         mCompositeDisposable.add(service.getPosts()
@@ -111,13 +187,13 @@ public class PostsRepositoryImpl implements PostsRepository {
                 case FetchPostsService.SUCCESS:
                     Log.d(TAG, "Hay datos");
 
-                    List<Post> posts = (List<Post>) resultData.getSerializable(FetchPostsService.RESULT_DATA_EXTRA);
+                    // List<Post> posts = (List<Post>) resultData.getSerializable(FetchPostsService.RESULT_DATA_EXTRA);
 
-                    postEvent(PostsEvent.DATA_LOADED, posts);
+                    // postEvent(PostsEvent.DATA_LOADED, posts);
 
                     break;
                 case FetchPostsService.ERROR:
-                    postEvent(PostsEvent.NOT_FOUND, "No hay datos");
+                    // postEvent(PostsEvent.NOT_FOUND, "No hay datos");
                     break;
 
             }
@@ -139,7 +215,7 @@ public class PostsRepositoryImpl implements PostsRepository {
     }
 
     private void postEvent(int eventType, String message, List<Post> posts) {
-        Log.d(TAG, "postEvent().    Evento publicado: "+ eventType);
+        Log.d(TAG, "postEvent().    Evento publicado: " + eventType);
         PostsEvent event = new PostsEvent(eventType, message, posts);
         EventBus eventBus = GreenRobotEventBus.getInstance();
         eventBus.post(event);

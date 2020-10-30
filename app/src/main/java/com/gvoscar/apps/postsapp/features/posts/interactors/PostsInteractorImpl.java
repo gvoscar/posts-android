@@ -22,4 +22,24 @@ public class PostsInteractorImpl implements PostsInteractor {
         Log.d(TAG, "getData()");
         this.repository.getData();
     }
+
+    @Override
+    public void subscribe() {
+        this.repository.subscribe();
+    }
+
+    @Override
+    public void unsubscribe() {
+        this.repository.unsubscribe();
+    }
+
+    @Override
+    public void removeAll() {
+        this.repository.removeAll();
+    }
+
+    @Override
+    public void removeById(String postId) {
+        this.repository.removeById(postId);
+    }
 }

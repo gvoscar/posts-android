@@ -20,7 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
+import com.gvoscar.apps.postsapp.App;
 import com.gvoscar.apps.postsapp.R;
+import com.gvoscar.apps.postsapp.features.details.ui.PostDetailsActivity;
 import com.gvoscar.apps.postsapp.features.posts.adapters.PostsAdapter;
 import com.gvoscar.apps.postsapp.features.posts.adapters.PostsAdapterListener;
 import com.gvoscar.apps.postsapp.features.posts.presenters.PostsPresenter;
@@ -49,6 +51,7 @@ public class PostsFragment extends Fragment implements PostsAdapterListener, Pos
     @BindView(R.id.framgePosts)
     FrameLayout framgePosts;
 
+    private App app;
     private PostsAdapter mAdapter;
     private PostsPresenter mPresenter;
     public static PostsFragment instance;
@@ -82,6 +85,8 @@ public class PostsFragment extends Fragment implements PostsAdapterListener, Pos
         View view = inflater.inflate(R.layout.fragment_posts, container, false);
         ButterKnife.bind(this, view);
         Log.d(TAG, "onCreateView()");
+
+        app = (App) getActivity().getApplication();
         instance = this;
         this.mPresenter = new PostsPresenterImpl(getActivity(), getContext(), this);
         this.mPresenter.onCreate();
@@ -102,16 +107,36 @@ public class PostsFragment extends Fragment implements PostsAdapterListener, Pos
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mPresenter.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mPresenter.onStop();
+        super.onStop();
+    }
+
+    @Override
     public void onPostClickListener(Post post) {
         Log.d(TAG, "POST ID: " + post.getId());
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("post", post);
+        app.setPost(post);
+
+        Intent intent = new Intent(getActivity(), PostDetailsActivity.class);
+        intent.putExtra("post", bundle);
+        getActivity().startActivity(intent);
     }
 
     @Override
     public void onNotFound(String message) {
-        // shimmer.stopShimmer();
-        // containerLoader.setVisibility(View.GONE);
-        // containerInfo.setVisibility(View.VISIBLE);
-        // txtNotFound.setVisibility(View.VISIBLE);
+        mAdapter.clear();
+        shimmer.stopShimmer();
+        containerLoader.setVisibility(View.GONE);
+        containerInfo.setVisibility(View.VISIBLE);
+        txtNotFound.setVisibility(View.VISIBLE);
         //showMessage(message);
     }
 
@@ -134,7 +159,7 @@ public class PostsFragment extends Fragment implements PostsAdapterListener, Pos
         snackbar.show();
     }
 
-    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             return false;
@@ -148,6 +173,7 @@ public class PostsFragment extends Fragment implements PostsAdapterListener, Pos
                 case ItemTouchHelper.LEFT:
                     Post post = mAdapter.getPost(position);
                     mAdapter.remove(position);
+                    mPresenter.removeById(String.valueOf(post.getId()));
                     Snackbar.make(framgePosts, "Se borro post #" + post.getId(), Snackbar.LENGTH_LONG)
                             .setAction("Deshacer", new View.OnClickListener() {
                                 @Override
@@ -173,7 +199,12 @@ public class PostsFragment extends Fragment implements PostsAdapterListener, Pos
         }
     };
 
-    public static void romoveAll(){
-        instance.mAdapter.clear();
+    public static void romoveAll() {
+        try {
+            instance.mAdapter.clear();
+            instance.mPresenter.removeAll();
+        } catch (Exception e) {
+            Log.e(TAG, e.getLocalizedMessage(), e);
+        }
     }
 }

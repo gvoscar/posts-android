@@ -54,6 +54,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             holder.imgFavorite.setVisibility(View.VISIBLE);
         }
         holder.txtBody.setText(String.valueOf(post.getBody()));
+        holder.txtId.setText(String.valueOf(post.getId()));
         holder.setOnCategoriesListener(post, listener);
     }
 
@@ -111,6 +112,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         ImageView imgReaded;
         @BindView(R.id.txtBody)
         TextView txtBody;
+        @BindView(R.id.txtId)
+        TextView txtId;
+
 
 
         public ViewHolder(@NonNull View itemView) {

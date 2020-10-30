@@ -33,6 +33,16 @@ public class PostsPresenterImpl implements PostsPresenter {
     }
 
     @Override
+    public void onStart() {
+        mInteractor.subscribe();
+    }
+
+    @Override
+    public void onStop() {
+        mInteractor.unsubscribe();
+    }
+
+    @Override
     public void onDestroy() {
         this.mBus.unregister(this);
     }
@@ -40,6 +50,16 @@ public class PostsPresenterImpl implements PostsPresenter {
     @Override
     public void getData() {
         this.mInteractor.getData();
+    }
+
+    @Override
+    public void removeAll() {
+        mInteractor.removeAll();
+    }
+
+    @Override
+    public void removeById(String postId) {
+        mInteractor.removeById(postId);
     }
 
     @Subscribe

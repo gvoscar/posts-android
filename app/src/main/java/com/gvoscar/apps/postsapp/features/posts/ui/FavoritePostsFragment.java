@@ -1,66 +1,138 @@
 package com.gvoscar.apps.postsapp.features.posts.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.gvoscar.apps.postsapp.App;
 import com.gvoscar.apps.postsapp.R;
+import com.gvoscar.apps.postsapp.features.details.ui.PostDetailsActivity;
+import com.gvoscar.apps.postsapp.features.posts.adapters.PostsAdapter;
+import com.gvoscar.apps.postsapp.features.posts.adapters.PostsAdapterListener;
+import com.gvoscar.apps.postsapp.features.posts.presenters.FavoritePostsPresenter;
+import com.gvoscar.apps.postsapp.features.posts.presenters.FavoritePostsPresenterImpl;
+import com.gvoscar.apps.postsapp.features.posts.presenters.PostsPresenterImpl;
+import com.gvoscar.apps.postsapp.pojos.Post;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FavoritePostsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class FavoritePostsFragment extends Fragment {
+import java.util.List;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
+public class FavoritePostsFragment extends Fragment implements PostsAdapterListener, PostsView {
+    private static final String TAG = FavoritePostsFragment.class.getSimpleName();
+    @BindView(R.id.txtNotFound)
+    TextView txtNotFound;
+    @BindView(R.id.shimmer)
+    ShimmerFrameLayout shimmer;
+    @BindView(R.id.containerLoader)
+    ConstraintLayout containerLoader;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.containerInfo)
+    ConstraintLayout containerInfo;
+    @BindView(R.id.frameFavoritePosts)
+    FrameLayout frameFavoritePosts;
+
+    private App app;
+    private PostsAdapter mAdapter;
+    private FavoritePostsPresenter mPresenter;
+    // private CarShopApp mSession;
 
     public FavoritePostsFragment() {
+
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FavoritePostsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FavoritePostsFragment newInstance(String param1, String param2) {
-        FavoritePostsFragment fragment = new FavoritePostsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorite_posts, container, false);
+        View view = inflater.inflate(R.layout.fragment_favorite_posts, container, false);
+        ButterKnife.bind(this, view);
+        Log.d(TAG, "onCreateView()");
+
+        app = (App) getActivity().getApplication();
+
+        this.mPresenter = new FavoritePostsPresenterImpl(this);
+        this.mPresenter.onCreate();
+
+
+        this.mAdapter = new PostsAdapter(this);
+        shimmer.startShimmer();
+
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        this.recyclerView.setAdapter(this.mAdapter);
+
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mPresenter.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mPresenter.onStop();
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        this.mPresenter.onDestroy();
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onNotFound(String message) {
+        mAdapter.clear();
+        shimmer.stopShimmer();
+        containerLoader.setVisibility(View.GONE);
+        containerInfo.setVisibility(View.VISIBLE);
+        txtNotFound.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onDataLoaded(List<Post> list) {
+        Log.d(TAG, "Cantidad de datos:    " + list.size());
+        mAdapter.clear();
+        mAdapter.addAll(list);
+        shimmer.stopShimmer();
+        txtNotFound.setVisibility(View.GONE);
+
+        containerLoader.setVisibility(View.GONE);
+        containerInfo.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onPostClickListener(Post post) {
+        Log.d(TAG, "POST ID: " + post.getId());
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("post", post);
+        app.setPost(post);
+
+        Intent intent = new Intent(getActivity(), PostDetailsActivity.class);
+        intent.putExtra("post", bundle);
+        getActivity().startActivity(intent);
     }
 }

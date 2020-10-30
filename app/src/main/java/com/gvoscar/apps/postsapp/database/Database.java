@@ -14,10 +14,11 @@ public class Database {
     private static final String TAG = Database.class.getSimpleName();
     private DatabaseReference database;
 
-    private static final String ORIENTATION = SetupDatabase.getOrientation();
+    private static final String ORIENTATION = "qa";
     private static final String USERS = "users";
     private static final String POSTS = "posts";
     private static final String DETAILS = "details";
+    private static final String FAVORITE_POSTS = "favorite_posts";
 
     public Database() {
         database = FirebaseDatabase.getInstance().getReference().child(ORIENTATION);
@@ -91,23 +92,12 @@ public class Database {
         return reference;
     }
 
-    public DatabaseReference getDetailsReference() {
+    public DatabaseReference getFavoritePostsReference() {
         DatabaseReference reference = null;
         if (getEmail() != null) {
             reference = database.getRoot()
                     .child(ORIENTATION)
-                    .child(DETAILS);
-        }
-        return reference;
-    }
-
-    public DatabaseReference getPostDetailReference(String postId) {
-        DatabaseReference reference = null;
-        if (getEmail() != null) {
-            reference = database.getRoot()
-                    .child(ORIENTATION)
-                    .child(DETAILS)
-                    .child(postId);
+                    .child(FAVORITE_POSTS);
         }
         return reference;
     }

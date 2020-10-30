@@ -8,9 +8,11 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.google.firebase.database.DatabaseReference;
 import com.gvoscar.apps.postsapp.apis.jsonplaceholder.JSONPlaceholderClient;
 import com.gvoscar.apps.postsapp.apis.jsonplaceholder.JSONPlaceholderService;
 import com.gvoscar.apps.postsapp.apis.jsonplaceholder.PostsResponse;
+import com.gvoscar.apps.postsapp.database.Database;
 import com.gvoscar.apps.postsapp.pojos.Post;
 
 import java.io.Serializable;
@@ -27,7 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FetchPostsService extends IntentService implements Callback<List<Post>>{
+public class FetchPostsService extends IntentService implements Callback<List<Post>> {
 
     private static final String TAG = FetchPostsService.class.getSimpleName();
 
@@ -42,6 +44,7 @@ public class FetchPostsService extends IntentService implements Callback<List<Po
     private ResultReceiver mReceiver;
     private List<Post> posts = null;
     private boolean retry;
+    private Database mDatabase;
 
 
     public FetchPostsService() {
@@ -52,6 +55,7 @@ public class FetchPostsService extends IntentService implements Callback<List<Po
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d(TAG, "INICIA SERVICIO DE POSTS");
         mReceiver = intent.getParcelableExtra(RECEIVER_EXTRA);
+        mDatabase = Database.getInstance();
 
         if (mReceiver == null) {
             Log.wtf(TAG, "RECEPTOR NO ENCONTRADO: No se puede enviar el resultado.");
@@ -112,8 +116,18 @@ public class FetchPostsService extends IntentService implements Callback<List<Po
             Log.d(TAG, "____________________________________");
             Log.d(TAG, "Cantidad de posts : " + cant);
 
+            DatabaseReference reference = mDatabase.getPostsReference();
+            int constraint = 0;
+            for (Post post : posts) {
+                if (constraint > 19) {
+                    post.setReaded(true);
+                }
+                reference.child(String.valueOf(post.getId())).setValue(post);
+                constraint++;
+            }
 
             deliverResultToReceiver(SUCCESS, posts);
+
         } catch (Exception e) {
             Log.d(TAG, e.getLocalizedMessage(), e);
         }

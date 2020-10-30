@@ -3,6 +3,7 @@ package com.gvoscar.apps.postsapp.apis.jsonplaceholder;
 
 
 import com.gvoscar.apps.postsapp.pojos.Post;
+import com.gvoscar.apps.postsapp.pojos.User;
 
 import java.util.List;
 
@@ -19,8 +20,8 @@ public interface JSONPlaceholderService {
     @GET("posts")
     Call<List<Post>> posts();
 
-//    @GET("users/{userId}")
-//    Call<UserResponse> usersById(@Path("userId") String userId);
+    @GET("users/{userId}")
+    Observable<User> getUsersById(@Path("userId") String userId);
 
 }
  
