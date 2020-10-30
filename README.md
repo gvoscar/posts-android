@@ -1,7 +1,9 @@
 # Aplicación de Mensajes
 
-Esta aplicación permite iniciar sesión, y leer los mensajes desde un API publica gratuita
+La aplicación permite visualizar los posts, borrar con swipe hacia la izquierda, borrar todos los posts. (Al borrar todos los posts, se reinicia y se vuelven a cargar automaticamente en la base de datos de Firebase Realtime)
+
+Puede ver los detalles de un post, marcarlo como favorito y filtrar todos los posts favoritos.
 
 ## Nota:
-Esta aplicación se encuentra en **desarrollo** y se esta haciendo uso de: [**{JSON} Placeholder**](https://jsonplaceholder.typicode.com/)
+Esta aplicación consume el API de :[**{JSON} Placeholder**](https://jsonplaceholder.typicode.com/)
 
